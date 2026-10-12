@@ -1,0 +1,192 @@
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <title>E-Commerce Website</title>
+</head>
+<body>
+
+<center>
+
+<!-- LOGIN PAGE -->
+<div id="login">
+    <h1>Login Page</h1>
+
+    <input type="email" id="email" placeholder="Enter Email"><br><br>
+    <input type="password" id="password" placeholder="Enter Password"><br><br>
+
+    <button onclick="loginUser()">Login</button>
+    <button onclick="showRegister()">Register</button>
+
+    <p id="msg"></p>
+</div>
+
+<!-- REGISTER PAGE -->
+<div id="register" style="display:none">
+    <h1>Register Page</h1>
+
+    <input type="text" id="name" placeholder="Enter Name"><br><br>
+    <input type="email" id="newEmail" placeholder="Enter Email"><br><br>
+    <input type="password" id="newPassword" placeholder="Enter Password"><br><br>
+
+    <button onclick="registerUser()">Create Account</button>
+    <button onclick="showLogin()">Back to Login</button>
+</div>
+
+<!-- E-COMMERCE WEBSITE -->
+<div id="shop" style="display:none">
+
+    <h1>Welcome to My E-Commerce Website</h1>
+    <h2 id="welcome"></h2>
+
+    <h2>Electronics</h2>
+
+    <h3>Headphones - ₹999</h3>
+    <img src="C:\Users\LENOVO\Desktop\pictures\Headphone.jpg" width="200" alt="Headphones"><br>
+    <button onclick="addCart('Headphones')">Add to Cart</button>
+
+    <h3>Mobile Phone - ₹19999</h3>
+    <img src="C:\Users\LENOVO\Desktop\pictures\one plus.jpg" width="200" alt="Mobile"><br>
+    <button onclick="addCart('Mobile Phone')">Add to Cart</button>
+
+    <h2>children kit</h2>
+
+    <h3>Kit - ₹1999</h3>
+    <img src="C:\Users\LENOVO\Desktop\pictures\kids.png" width="200" alt=" Kit"><br>
+    <button onclick="addCart('kit')">Add to Cart</button>
+
+    <h2>Fashion</h2>
+
+    <h3>shirt - ₹1499</h3>
+    <img src="C:\Users\LENOVO\Desktop\pictures\men.jpg" width="200" alt="shirt"><br>
+    <button onclick="addCart('shirt')">Add to Cart</button>
+
+    <h2>My Cart</h2>
+    <ul id="cart"></ul>
+
+    <button onclick="logout()">Logout</button>
+
+</div>
+
+</center>
+
+<script>
+
+// REGISTER
+function registerUser() {
+    let name = document.getElementById("name").value.trim();
+    let email = document.getElementById("newEmail").value.trim();
+    let password = document.getElementById("newPassword").value;
+
+    if (name === "" || email === "" || password === "") {
+        alert("Please fill all fields");
+        return;
+    }
+
+    let users = JSON.parse(localStorage.getItem("users")) || [];
+
+    if (users.some(u => u.email === email)) {
+        alert("Email already registered");
+        return;
+    }
+
+    users.push({name: name, email: email, password: password});
+    localStorage.setItem("users", JSON.stringify(users));
+
+    alert("Registration Successful! Please Login.");
+
+    document.getElementById("email").value = email;
+    document.getElementById("password").value = "";
+
+    showLogin();
+}
+
+// LOGIN
+function loginUser() {
+    let email = document.getElementById("email").value.trim();
+    let password = document.getElementById("password").value;
+
+    let users = JSON.parse(localStorage.getItem("users")) || [];
+
+    let user = users.find(
+        u => u.email === email && u.password === password
+    );
+
+    if (user) {
+        localStorage.setItem("currentUser", email);
+
+        document.getElementById("login").style.display = "none";
+        document.getElementById("register").style.display = "none";
+        document.getElementById("shop").style.display = "block";
+
+        document.getElementById("welcome").textContent =
+            "Welcome, " + user.name;
+
+        showCart();
+    } else {
+        document.getElementById("msg").textContent =
+            "Invalid login! Please register first.";
+    }
+}
+
+// SHOW REGISTER
+function showRegister() {
+    document.getElementById("login").style.display = "none";
+    document.getElementById("register").style.display = "block";
+}
+
+// SHOW LOGIN
+function showLogin() {
+    document.getElementById("register").style.display = "none";
+    document.getElementById("shop").style.display = "none";
+    document.getElementById("login").style.display = "block";
+    document.getElementById("msg").textContent = "";
+}
+
+// ADD TO CART
+function addCart(product) {
+    let email = localStorage.getItem("currentUser");
+    let key = "cart_" + email;
+
+    let items = JSON.parse(localStorage.getItem(key)) || [];
+    items.push(product);
+
+    localStorage.setItem(key, JSON.stringify(items));
+
+    alert(product + " added to cart!");
+    showCart();
+}
+
+// DISPLAY CART
+function showCart() {
+    let email = localStorage.getItem("currentUser");
+    let items = JSON.parse(localStorage.getItem("cart_" + email)) || [];
+
+    let list = document.getElementById("cart");
+    list.replaceChildren();
+
+    items.forEach(function(product) {
+        let li = document.createElement("li");
+        li.textContent = product;
+        list.appendChild(li);
+    });
+}
+
+// LOGOUT
+function logout() {
+    localStorage.removeItem("currentUser");
+
+    document.getElementById("shop").style.display = "none";
+    document.getElementById("password").value = "";
+
+    showLogin();
+}
+
+// START WITH LOGIN PAGE
+showLogin();
+
+</script>
+
+</body>
+</html>
+```
